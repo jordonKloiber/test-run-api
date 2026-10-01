@@ -5,7 +5,11 @@ import (
 	"testing"
 )
 
-// ValidateTestResult — Hand-written tests
+// TestValidateTestResult covers single-result validation in isolation: valid
+// pass/fail/skip results; an empty test_name; every invalid status spelling
+// (misspelled and wrong-case, for all three statuses); negative vs. zero
+// duration; and that error_message is optional regardless of status (nil on
+// a fail, non-nil on a pass are both valid).
 func TestValidateTestResult(t *testing.T) {
 	warningMsg := "test passed but with a warning"
 
@@ -155,11 +159,12 @@ func TestValidateTestResult(t *testing.T) {
 	}
 }
 
-// ValidateRun — skeleton only. Fill in the table below.
-// Remember: per the plan, ValidateRun must COLLECT ALL violations, not stop
-// at the first one — so at least one case here should assert that (see the
-// commented-out example at the bottom for how to check error content, not
-// just error/no-error).
+// TestValidateRun covers run-level validation: a fully valid run with mixed
+// results; empty suite_name/source each independently trigger an error; and
+// Results being either an empty slice or nil both trigger an error. This
+// only checks error/no-error (wantErr bool) — the functions below check the
+// error *content*, since collecting multiple violations can't be proven by
+// a bool alone.
 func TestValidateRun(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -255,6 +260,11 @@ func TestValidateRun_CollectsAllErrors(t *testing.T) {
 	}
 }
 
+// TestValidateRun_CollectsAllResultErrors proves the same collect-everything
+// behavior through the nested Results loop, not just the top-level fields:
+// three results, each with a different violation type (empty test_name,
+// invalid status, negative duration_ms), and all three must show up in the
+// joined message, each correctly attributed to its own index.
 func TestValidateRun_CollectsAllResultErrors(t *testing.T) {
 	r := Run{
 		SuiteName: "checkout-e2e",
