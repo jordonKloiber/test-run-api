@@ -1,4 +1,4 @@
-# test-run-api (IN PROGRESS)
+# test-run-api (WIP)
 
 A small Go REST API that ingests structured test-run results from CI pipelines (pass/fail/duration per test) and tracks flakiness over time. It doesn't test anything itself — it's the service other pipelines report their results *into*.
 
