@@ -13,6 +13,10 @@ import (
 	"github.com/jordonKloiber/test-run-api/internal/run"
 )
 
+// testAPIKey is the configured key used when building a router in these
+// tests — requests to the auth-gated POST /runs must present it.
+const testAPIKey = "test-api-key"
+
 // fakeStore is a test double for run.Store — each test case plugs in exactly
 // the behavior it needs via these function fields, without a real database.
 type fakeStore struct {
@@ -49,7 +53,7 @@ func TestCreateRun(t *testing.T) {
 			},
 		}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		body := `{
 			"suite_name": "checkout-e2e",
@@ -59,6 +63,7 @@ func TestCreateRun(t *testing.T) {
 			]
 		}`
 		req := httptest.NewRequest(http.MethodPost, "/runs", strings.NewReader(body))
+		req.Header.Set("X-API-Key", testAPIKey)
 		rec := httptest.NewRecorder()
 
 		router.ServeHTTP(rec, req)
@@ -88,7 +93,7 @@ func TestCreateRun(t *testing.T) {
 		// loudly instead of silently returning a fake success.
 		store := &fakeStore{}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		body := `{
 			"suite_name": "",
@@ -98,6 +103,7 @@ func TestCreateRun(t *testing.T) {
 			]
 		}`
 		req := httptest.NewRequest(http.MethodPost, "/runs", strings.NewReader(body))
+		req.Header.Set("X-API-Key", testAPIKey)
 		rec := httptest.NewRecorder()
 
 		router.ServeHTTP(rec, req)
@@ -115,10 +121,11 @@ func TestCreateRun(t *testing.T) {
 		// malformed body should never reach the store at all.
 		store := &fakeStore{}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		body := `{not json`
 		req := httptest.NewRequest(http.MethodPost, "/runs", strings.NewReader(body))
+		req.Header.Set("X-API-Key", testAPIKey)
 		rec := httptest.NewRecorder()
 
 		router.ServeHTTP(rec, req)
@@ -138,7 +145,7 @@ func TestCreateRun(t *testing.T) {
 			},
 		}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		body := `{
 			"suite_name": "checkout-e2e",
@@ -148,6 +155,7 @@ func TestCreateRun(t *testing.T) {
 			]
 		}`
 		req := httptest.NewRequest(http.MethodPost, "/runs", strings.NewReader(body))
+		req.Header.Set("X-API-Key", testAPIKey)
 		rec := httptest.NewRecorder()
 
 		router.ServeHTTP(rec, req)
@@ -180,7 +188,7 @@ func TestGetRun(t *testing.T) {
 			},
 		}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		req := httptest.NewRequest(http.MethodGet, "/runs/42", nil)
 		rec := httptest.NewRecorder()
@@ -214,7 +222,7 @@ func TestGetRun(t *testing.T) {
 			},
 		}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		req := httptest.NewRequest(http.MethodGet, "/runs/999", nil)
 		rec := httptest.NewRecorder()
@@ -233,7 +241,7 @@ func TestGetRun(t *testing.T) {
 			},
 		}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		req := httptest.NewRequest(http.MethodGet, "/runs/42", nil)
 		rec := httptest.NewRecorder()
@@ -250,7 +258,7 @@ func TestGetRun(t *testing.T) {
 		// rejected before the store is ever touched.
 		store := &fakeStore{}
 		handler := &RunsHandler{Store: store}
-		router := NewRouter(handler)
+		router := NewRouter(handler, testAPIKey)
 
 		req := httptest.NewRequest(http.MethodGet, "/runs/abc", nil)
 		rec := httptest.NewRecorder()
