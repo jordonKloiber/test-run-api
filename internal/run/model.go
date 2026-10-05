@@ -24,3 +24,10 @@ type Run struct {
 	SubmittedAt time.Time
 	Results     []TestResult
 }
+
+type RunResult struct {
+	TestName    string
+	Status      Status
+	DurationMS  int
+	SubmittedAt time.Time
+}

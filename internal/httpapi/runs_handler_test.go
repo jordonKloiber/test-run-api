@@ -16,9 +16,10 @@ import (
 // fakeStore is a test double for run.Store — each test case plugs in exactly
 // the behavior it needs via these function fields, without a real database.
 type fakeStore struct {
-	createRunFunc   func(ctx context.Context, r run.Run) (run.Run, error)
-	getRunFunc      func(ctx context.Context, id int64) (run.Run, error)
-	createRunCalled bool
+	createRunFunc         func(ctx context.Context, r run.Run) (run.Run, error)
+	getRunFunc            func(ctx context.Context, id int64) (run.Run, error)
+	listRecentResultsFunc func(ctx context.Context, source string) ([]run.RunResult, error)
+	createRunCalled       bool
 }
 
 func (f *fakeStore) CreateRun(ctx context.Context, r run.Run) (run.Run, error) {
@@ -28,6 +29,10 @@ func (f *fakeStore) CreateRun(ctx context.Context, r run.Run) (run.Run, error) {
 
 func (f *fakeStore) GetRun(ctx context.Context, id int64) (run.Run, error) {
 	return f.getRunFunc(ctx, id)
+}
+
+func (f *fakeStore) ListRecentResults(ctx context.Context, source string) ([]run.RunResult, error) {
+	return f.listRecentResultsFunc(ctx, source)
 }
 
 // TestCreateRun covers POST /runs: a valid payload persists (via the fake)

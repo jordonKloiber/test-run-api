@@ -1,7 +1,7 @@
 include .env
 export
 
-.PHONY: migrate-up migrate-down migrate-create run test
+.PHONY: migrate-up migrate-down migrate-create run test test-integration
 
 migrate-up:
 	@migrate -database "$(DATABASE_URL)" -path migrations up
@@ -17,3 +17,8 @@ run:
 
 test:
 	go test ./...
+
+# Requires DATABASE_URL to point at the dedicated integration-test database,
+# never the real app's .env value — see the Phase 2 design doc.
+test-integration:
+	go test -tags=integration ./...

@@ -13,6 +13,7 @@ var ErrNotFound = errors.New("run not found")
 type Store interface {
 	CreateRun(ctx context.Context, r Run) (Run, error)
 	GetRun(ctx context.Context, id int64) (Run, error)
+	ListRecentResults(ctx context.Context, source string) ([]RunResult, error)
 }
 
 type pgStore struct {
@@ -94,4 +95,35 @@ func (s *pgStore) GetRun(ctx context.Context, id int64) (Run, error) {
 	}
 
 	return r, nil
+}
+
+func (s *pgStore) ListRecentResults(ctx context.Context, source string) ([]RunResult, error) {
+	rows, err := s.pool.Query(ctx,
+		`SELECT test_results.test_name, test_results.status, test_results.duration_ms, runs.submitted_at
+		 FROM test_results
+		 JOIN runs ON runs.id = test_results.run_id
+		 WHERE ($1 = '' OR runs.source = $1)
+		 ORDER BY test_results.test_name, runs.submitted_at DESC`,
+		source,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	results := []RunResult{}
+	for rows.Next() {
+		var rr RunResult
+		var status string
+		if err := rows.Scan(&rr.TestName, &status, &rr.DurationMS, &rr.SubmittedAt); err != nil {
+			return nil, err
+		}
+		rr.Status = Status(status)
+		results = append(results, rr)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
