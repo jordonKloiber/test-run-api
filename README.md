@@ -1,4 +1,4 @@
-# test-run-api
+# test-run-api (WIP)
 
 A small Go REST API that ingests structured test-run results from CI pipelines (pass/fail/duration per test) and tracks flakiness over time. It doesn't test anything itself — it's the service other pipelines report their results *into*.
 
@@ -10,4 +10,6 @@ Go 1.27 (stdlib `net/http`, no framework) · PostgreSQL via [pgx](https://github
 
 ## Why this exists
 
-Built to get hands-on with Go and Postgres on a real (but small) service. With schema design, validation, and test coverage you can actually read.
+Built to get hands-on with Go and Postgres on a real (but small) service. With schema design, validation, and test coverage you can actually read. 
+
+Writing most of it by hand with assistance from AI, rather than written by AI, in order to practice my Go. This is meant to be a portfolio project to showcase my full-stack skills with REST APIs and Go.
