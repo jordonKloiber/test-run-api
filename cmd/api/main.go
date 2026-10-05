@@ -26,7 +26,7 @@ func main() {
 
 	store := run.NewPgStore(pool)
 	handler := &httpapi.RunsHandler{Store: store}
-	mux := httpapi.NewRouter(handler)
+	mux := httpapi.NewRouter(handler, cfg.APIKey)
 
 	addr := ":" + cfg.Port
 	log.Printf("listening on %s", addr)
