@@ -4,4 +4,6 @@
 *.out
 .env
 .env.local
+.env.integration
 .vscode/
+CLAUDE.md
