@@ -12,7 +12,7 @@ Go 1.27 (stdlib `net/http`, no framework) · PostgreSQL via [pgx](https://github
 
 Built to get hands-on with Go and Postgres on a real (but small) service, with schema design, validation, and test coverage you can  read.
 
-Partly written by hand with assistance from Claude and in order to practice my Go. All tests written are hand-written. This is meant to be a portfolio project to showcase full-stack skills with REST APIs and Go. Ultimately all major architectural decisions made by me, so feel free to ask any questions you might have. I'd be happy to explain how it works and decision rationale in an interview!
+Partly written by hand with assistance from Claude and in order to practice my Go. All tests are hand-written. This is meant to be a portfolio project to showcase full-stack skills with REST APIs and Go. Ultimately all major architectural decisions made by me, so feel free to ask any questions you might have. I'd be happy to explain how it works and decision rationale in an interview!
 
 ## Quickstart
 
